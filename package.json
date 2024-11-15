@@ -1,0 +1,30 @@
+{
+  "name": "Dapp-Marketplace",
+  "version": "1.0.0",
+  "license": "MIT",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "apps/*",
+      "libs/*"
+    ],
+    "nohoist": [
+      "**/@nestjs",
+      "**/@nestjs/**"
+    ]
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3",
+    "nx": "20.1.0",
+    "husky": "^8.0.0"
+  },
+  "scripts": {
+    "format": "prettier  \"{apps,libs,standalone}/**/*.{ts,tsx,js,json}\" --ignore-path .gitignore",
+    "format:check": "yarn format --check",
+    "format:write": "yarn format --write",
+    "tsc": "yarn nx run-many -t tsc",
+    "lint": "yarn nx run-many -t lint",
+    "validate": "yarn format:write && yarn lint && yarn tsc",
+    "prepare": "husky install"
+  }
+}
