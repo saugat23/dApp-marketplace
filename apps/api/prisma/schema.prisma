@@ -1,0 +1,45 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement()) // Unique identifier for each user
+  address   String   @unique // Ethereum address of the user
+  items     Item[]   @relation("UserItems") // Items listed by the user
+  purchases Purchase[] // Items purchased by the user
+}
+
+model Item {
+  id        Int      @id @default(autoincrement()) // Primary key, similar to the `id` in the contract
+  ownerId   Int      // Foreign key to reference the owner (User)
+  owner     User     @relation("UserItems", fields: [ownerId], references: [id])
+  name      String   // The name of the item
+  price     Int      // Price of the item (in Wei or smallest currency unit)
+  quantity  Int      // Quantity of the item
+  isSold    Boolean  @default(false) // Whether the item is sold out
+  purchases Purchase[] // Purchases of this item
+
+  createdAt DateTime @default(now()) // Timestamp for when the item was listed
+}
+
+model Purchase {
+  id        Int      @id @default(autoincrement()) // Primary key
+  itemId    Int      // Foreign key to reference the purchased item
+  item      Item     @relation(fields: [itemId], references: [id])
+  buyerId   Int      // Foreign key to reference the buyer (User)
+  buyer     User     @relation(fields: [buyerId], references: [id])
+  price     Int      // Price paid for the item
+  quantity  Int      // Quantity purchased
+  createdAt DateTime @default(now()) // Timestamp for when the purchase occurred
+}
